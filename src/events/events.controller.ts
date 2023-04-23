@@ -63,6 +63,8 @@ export class EventsController {
 
   @Post()
   //validationPipe check DTO class and if the field has decorator validate them
+  //globally define ValidationPipe main.ts
+  // async create(@Body(ValidationPipe) input: CreateEventDto) {
   async create(@Body(ValidationPipe) input: CreateEventDto) {
     return await this.repository.save({
       ...input,
