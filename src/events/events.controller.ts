@@ -1,3 +1,4 @@
+import { Repository } from 'typeorm';
 import {
   Body,
   Controller,
@@ -11,50 +12,54 @@ import {
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entity/event.entity.';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Controller('/events')
 export class EventsController {
-  private events: Event[] = [];
+  constructor(
+    @InjectRepository(Event)
+    private readonly repository: Repository<Event>,
+  ) {}
 
   @Get()
-  findAll() {
-    return this.events;
+  async findAll() {
+    return await this.repository.find();
   }
 
   @Get(':id')
-  findOne(@Param('id') id) {
-    const event = this.events.find((event) => event.id === parseInt(id));
-    return event;
+  async findOne(@Param('id') id) {
+    return await this.repository.findBy({
+      id,
+    });
   }
 
   @Post()
-  create(@Body() input: CreateEventDto) {
-    const event = {
+  async create(@Body() input: CreateEventDto) {
+    return await this.repository.save({
       ...input,
       when: new Date(input.when),
-      id: this.events.length + 1,
-    };
-
-    this.events.push(event);
-    return event;
+    });
   }
 
   @Patch(':id')
-  update(@Param('id') id, @Body() input: UpdateEventDto) {
-    const index = this.events.findIndex((event) => event.id === parseInt(id));
+  async update(@Param('id') id, @Body() input: UpdateEventDto) {
+    const event = await this.repository.findBy({
+      id,
+    });
 
-    this.events[index] = {
-      ...this.events[index],
+    return await this.repository.save({
+      ...event,
       ...input,
-      when: input.when ? new Date(input.when) : this.events[index].when,
-    };
-
-    return this.events[index];
+      when: input.when ? new Date(input.when) : event[0].when,
+    });
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id') id) {
-    this.events = this.events.filter((event) => event.id !== parseInt(id));
+  async remove(@Param('id') id) {
+    const event = await this.repository.findBy({
+      id,
+    });
+    await this.repository.remove(event);
   }
 }
