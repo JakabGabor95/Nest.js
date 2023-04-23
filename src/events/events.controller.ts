@@ -6,8 +6,10 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -52,14 +54,16 @@ export class EventsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id) {
+  //nestJs includes useful pipes such as "ParseIntPipe, ParseBoolPipe"
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.repository.findBy({
       id,
     });
   }
 
   @Post()
-  async create(@Body() input: CreateEventDto) {
+  //validationPipe check DTO class and if the field has decorator validate them
+  async create(@Body(ValidationPipe) input: CreateEventDto) {
     return await this.repository.save({
       ...input,
       when: new Date(input.when),
