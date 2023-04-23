@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { MoreThan, Repository, Like } from 'typeorm';
 import {
   Body,
   Controller,
@@ -24,6 +24,31 @@ export class EventsController {
   @Get()
   async findAll() {
     return await this.repository.find();
+  }
+
+  @Get('/practice')
+  async practice() {
+    return await this.repository.find({
+      //show only these properties
+      select: ['id', 'when'],
+      where: [
+        //and operator
+        {
+          id: MoreThan(2),
+          when: MoreThan(new Date('2021-02-12T13:00:00')),
+        },
+        //or operator
+        {
+          description: Like('%meet%'),
+        },
+      ],
+      //SQL limit statement
+      take: 2,
+      //sort desc, asc
+      order: {
+        id: 'DESC',
+      },
+    });
   }
 
   @Get(':id')
