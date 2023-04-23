@@ -32,8 +32,9 @@ export class EventsController {
     const event = {
       ...input,
       when: new Date(input.when),
-      id: this.events.length++,
+      id: this.events.length + 1,
     };
+
     this.events.push(event);
     return event;
   }
@@ -54,6 +55,6 @@ export class EventsController {
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id') id) {
-    this.events = this.events.filter((event) => event.id !== id);
+    this.events = this.events.filter((event) => event.id !== parseInt(id));
   }
 }
