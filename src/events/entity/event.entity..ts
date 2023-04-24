@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, PrimaryColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  PrimaryColumn,
+  Column,
+  OneToMany,
+} from 'typeorm';
+import { Attendee } from './attendee.entity';
 //first parameter of the decorator: configure the table name
 //second parameter: optional parameter set of entities specific options
 // @Entity('event', { name: 'event' })
@@ -24,4 +31,7 @@ export class Event {
 
   @Column()
   address: string;
+
+  @OneToMany(() => Attendee, (attendee) => attendee.event)
+  attendees: Attendee[];
 }
