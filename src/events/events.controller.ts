@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   Logger,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -62,9 +63,15 @@ export class EventsController {
   @Get(':id')
   //nestJs includes useful pipes such as "ParseIntPipe, ParseBoolPipe"
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return await this.repository.findBy({
+    const event = await this.repository.findBy({
       id,
     });
+
+    if (!event.length) {
+      throw new NotFoundException();
+    }
+
+    return event;
   }
 
   //Otherway to apply pipes
@@ -95,6 +102,10 @@ export class EventsController {
       id,
     });
 
+    if (!event.length) {
+      throw new NotFoundException();
+    }
+
     return await this.repository.save({
       ...event,
       ...input,
@@ -108,6 +119,11 @@ export class EventsController {
     const event = await this.repository.findBy({
       id,
     });
+
+    if (!event.length) {
+      throw new NotFoundException();
+    }
+
     await this.repository.remove(event);
   }
 }
