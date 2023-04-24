@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, PrimaryColumn, Column } from 'typeorm';
 //first parameter of the decorator: configure the table name
 //second parameter: optional parameter set of entities specific options
-@Entity('event', { name: 'event' })
+// @Entity('event', { name: 'event' })
+@Entity()
 export class Event {
   //I can use to phoneNumber or other important field
   //@PrimaryColumn()
