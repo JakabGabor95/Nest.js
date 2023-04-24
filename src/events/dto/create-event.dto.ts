@@ -8,6 +8,9 @@ export class CreateEventDto {
   description: string;
   @IsDateString()
   when: string;
+  //I can use specific validation group such as "create", "update" etc.
+  /*   @Length(5, 255, { groups: ['create'] })
+  @Length(10, 20, { groups: ['update'] }) */
   @Length(5, 255)
   address: string;
 }

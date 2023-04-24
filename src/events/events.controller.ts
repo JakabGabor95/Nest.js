@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -61,11 +62,18 @@ export class EventsController {
     });
   }
 
+  //Otherway to apply pipes
+  //@UsePipes(new ValidationPipe({ groups: ['create'] }))
   @Post()
   //validationPipe check DTO class and if the field has decorator validate them
   //globally define ValidationPipe main.ts
   // async create(@Body(ValidationPipe) input: CreateEventDto) {
-  async create(@Body(ValidationPipe) input: CreateEventDto) {
+  //If I defined the validation in dto, then I need to create a new validation type object
+  //inside the @Body
+  async create(
+    // @Body(new ValidationPipe({ groups: ['create'] })) input: CreateEventDto,
+    @Body() input: CreateEventDto,
+  ) {
     return await this.repository.save({
       ...input,
       when: new Date(input.when),
@@ -73,7 +81,11 @@ export class EventsController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id, @Body() input: UpdateEventDto) {
+  async update(
+    @Param('id') id,
+    // @Body(new ValidationPipe({ groups: ['update'] })) input: UpdateEventDto,
+    @Body() input: UpdateEventDto,
+  ) {
     const event = await this.repository.findBy({
       id,
     });
