@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { EventsController } from './events/events.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Event } from './events/entity/event.entity.';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -19,10 +20,9 @@ import { Event } from './events/entity/event.entity.';
       //automatic upgrade schmema when entities changing
       synchronize: true,
     }),
-    //if i want to inject an entity, I have to put it in forFeature array
-    TypeOrmModule.forFeature([Event]),
+    EventsModule,
   ],
-  controllers: [AppController, EventsController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
